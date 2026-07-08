@@ -3,218 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResonanceMax Gearbox: The Eigengap Clutch</title>
+    <title>Eigengap Compute Clutch</title>
     <style>
         :root {
-            --bg-color: #0f1115;
-            --panel-bg: #1a1d24;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-            --fast-color: #00f0ff;
-            --slow-color: #ffbf00;
-            --border-color: #334155;
+            --bg: #131314;
+            --surface: #1e1f22;
+            --text-main: #e8eaed;
+            --text-muted: #9aa0a6;
+            --accent-fast: #81c995; /* Bright Green */
+            --accent-slow: #f28b82; /* Bright Pink/Red */
+            --wave-1: #8ab4f8; /* Bright Blue */
+            --wave-2: #fde293; /* Bright Yellow */
         }
 
         body {
-            margin: 0;
-            padding: 20px;
-            background-color: var(--bg-color);
+            background-color: var(--bg);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
+            padding: 40px 20px;
+            margin: 0;
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        .header {
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(0,0,0,0.2);
-        }
-
-        .header h1 {
+        h2 {
+            font-weight: 400;
             margin: 0;
             font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+            letter-spacing: 0.5px;
         }
 
-        .header p {
-            margin: 8px 0 0 0;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            min-height: 400px;
-        }
-
-        .controls {
-            padding: 30px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .control-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .val-display {
-            font-family: monospace;
-            background: rgba(0,0,0,0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        input[type=range] {
-            width: 100%;
-            -webkit-appearance: none;
-            background: #334155;
-            height: 6px;
-            border-radius: 3px;
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .visualization {
-            display: flex;
-            flex-direction: column;
+        .canvas-container {
             position: relative;
-        }
-
-        .status-bar {
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            height: 60px;
-            box-sizing: border-box;
-        }
-
-        .math-display {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.2rem;
-            letter-spacing: -0.5px;
-        }
-
-        .route-status {
-            font-weight: bold;
-            font-size: 1.1rem;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .status-fast {
-            color: var(--bg-color);
-            background-color: var(--fast-color);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-        }
-
-        .status-slow {
-            color: var(--bg-color);
-            background-color: var(--slow-color);
-            box-shadow: 0 0 15px rgba(255, 191, 0, 0.4);
+            width: 100%;
+            height: 380px;
+            background: #131314;
+            border-radius: 12px;
+            border: 1px solid #28292a;
+            overflow: hidden;
         }
 
         canvas {
-            flex: 1;
+            display: block;
             width: 100%;
             height: 100%;
-            background: #111318;
         }
 
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .controls { border-right: none; border-bottom: 1px solid var(--border-color); }
+        .legend {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 0 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            text-align: center;
+            border-top: 1px solid #28292a;
+            border-bottom: 1px solid #28292a;
+            padding: 20px 0;
+            margin-top: 10px;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            padding: 10px 20px;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .slider-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .slider-label {
+            font-size: 0.9rem;
+            width: 100px;
+            color: var(--text-main);
+        }
+
+        .slider-val {
+            font-family: monospace;
+            background: #1e1f22;
+            padding: 4px 10px;
+            border-radius: 6px;
+            min-width: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            background: transparent;
+            height: 24px;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: #3c4043;
+            border-radius: 1px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            background: #fff;
+            border-radius: 50%;
+            margin-top: -7px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        input[type="range"]:focus {
+            outline: none;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>ResonanceMax Gearbox: The Eigengap Clutch</h1>
-        <p>Adjust the singular values to observe the topological routing in real-time.</p>
+    <h2>Eigengap Compute Clutch</h2>
+
+    <div class="canvas-container">
+        <canvas id="simCanvas"></canvas>
     </div>
 
-    <div class="dashboard">
-        <div class="controls">
-            <div class="control-group">
-                <div class="control-header">
-                    <span>Primary Vector (σ₁)</span>
-                    <span class="val-display" id="val-s1">80</span>
-                </div>
+    <div class="legend">
+        <div class="legend-item"><div class="dot" style="background: var(--accent-fast)"></div> Fast Path (Reflex)</div>
+        <div class="legend-item"><div class="dot" style="background: var(--accent-slow)"></div> Slow Path (Inference)</div>
+    </div>
+
+    <div class="metrics">
+        <div>
+            <div class="metric-label">Eigengap (g)</div>
+            <div class="metric-value" id="val-g">0.75</div>
+        </div>
+        <div>
+            <div class="metric-label">Status</div>
+            <div class="metric-value" id="val-status" style="color: var(--accent-fast)">Reflex</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="slider-row">
+            <div class="slider-group">
+                <div class="slider-label">Sigma 1</div>
                 <input type="range" id="s1" min="1" max="100" value="80">
+                <div class="slider-val" id="val-s1">80</div>
             </div>
-
-            <div class="control-group">
-                <div class="control-header">
-                    <span>Secondary Vector (σ₂)</span>
-                    <span class="val-display" id="val-s2">40</span>
-                </div>
-                <input type="range" id="s2" min="1" max="100" value="40">
-            </div>
-
-            <hr style="border: 0; border-top: 1px solid var(--border-color); width: 100%; margin: 10px 0;">
-
-            <div class="control-group">
-                <div class="control-header">
-                    <span>Survival Threshold (τ)</span>
-                    <span class="val-display" id="val-tau">0.50</span>
-                </div>
-                <input type="range" id="tau" min="0.01" max="0.99" step="0.01" value="0.50">
-            </div>
-            
-            <div style="margin-top: auto; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                <strong>Mechanism:</strong><br>
-                A wide gap (g > τ) indicates stability. The system engages <strong>FastAPI</strong>.<br><br>
-                A narrow gap (g ≤ τ) indicates ambiguity. The clutch drops, allocating compute to <strong>SlowAPI</strong>.
+            <div class="slider-group">
+                <div class="slider-label">Sigma 2</div>
+                <input type="range" id="s2" min="1" max="100" value="20">
+                <div class="slider-val" id="val-s2">20</div>
             </div>
         </div>
-
-        <div class="visualization">
-            <div class="status-bar">
-                <div class="math-display" id="math-out">g = (80 - 40) / 80 = 0.500</div>
-                <div class="route-status" id="route-indicator">Evaluating...</div>
+        <div class="slider-row">
+            <div class="slider-group">
+                <div class="slider-label">Threshold (tau)</div>
+                <input type="range" id="tau" min="0.0" max="0.99" step="0.01" value="0.50">
+                <div class="slider-val" id="val-tau">0.50</div>
             </div>
-            <canvas id="simCanvas"></canvas>
         </div>
     </div>
 </div>
@@ -233,84 +226,159 @@
         s1: document.getElementById('val-s1'),
         s2: document.getElementById('val-s2'),
         tau: document.getElementById('val-tau'),
-        math: document.getElementById('math-out'),
-        indicator: document.getElementById('route-indicator')
+        g: document.getElementById('val-g'),
+        status: document.getElementById('val-status')
     };
 
-    let width, height;
+    let width, height, centerX, centerY;
+    let time = 0;
     let particles = [];
-    let frameCount = 0;
+
+    // Colors matching the original screenshot
+    const colors = {
+        wave1: '#8ab4f8',
+        wave2: '#fde293',
+        fast: '#81c995',
+        slow: '#f28b82',
+        inactive: '#3c4043',
+        pillBg: '#1e1f22',
+        text: '#e8eaed'
+    };
 
     function resize() {
         const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
         width = rect.width;
-        height = rect.height - 60; // Subtract status bar height
-        canvas.width = width;
-        canvas.height = height;
+        height = rect.height;
+        centerX = width / 2;
+        centerY = height / 2;
     }
     window.addEventListener('resize', resize);
     resize();
 
     class Particle {
-        constructor(yTarget, speed, color, isSlow) {
-            this.x = 0;
-            this.y = height / 2;
-            this.yTarget = yTarget;
-            this.speed = speed;
-            this.color = color;
-            this.isSlow = isSlow;
-            this.phase = 0;
-            this.active = true;
-            this.trail = [];
+        constructor(isFast) {
+            this.progress = 0;
+            this.isFast = isFast;
+            this.speed = isFast ? 0.015 : 0.012;
+            this.offset = (Math.random() - 0.5) * 8; // Slight scatter for the particle stream
         }
 
         update() {
-            this.trail.push({x: this.x, y: this.y});
-            if (this.trail.length > 20) this.trail.shift();
-
-            if (this.isSlow) {
-                // SlowAPI Path: Dips down, circles in the "eigenmode compute pool", then exits
-                if (this.x < width * 0.3) {
-                    this.x += this.speed;
-                    this.y += (this.yTarget - this.y) * 0.1;
-                } else if (this.x < width * 0.6) {
-                    this.phase += 0.15;
-                    this.x += this.speed * 0.4;
-                    this.y = this.yTarget + Math.sin(this.phase) * 15;
-                } else {
-                    this.x += this.speed * 1.5;
-                    this.y += ((height/2) - this.y) * 0.1;
-                }
-            } else {
-                // FastAPI Path: Shoots straight across the top
-                this.x += this.speed * 2;
-                this.y += (this.yTarget - this.y) * 0.2;
-            }
-
-            if (this.x > width + 50) this.active = false;
+            this.progress += this.speed;
+            return this.progress <= 1;
         }
 
         draw(ctx) {
-            if (this.trail.length < 2) return;
-            ctx.beginPath();
-            ctx.moveTo(this.trail[0].x, this.trail[0].y);
-            for (let i = 1; i < this.trail.length; i++) {
-                ctx.lineTo(this.trail[i].x, this.trail[i].y);
+            const startX = centerX;
+            const startY = centerY;
+            const endX = width;
+            
+            let currentX, currentY;
+
+            if (this.isFast) {
+                const endY = centerY - 80;
+                currentX = startX + (endX - startX) * this.progress;
+                // Bezier curve equivalent math for smooth ease out
+                currentY = startY + (endY - startY) * Math.sin(this.progress * Math.PI / 2) + this.offset;
+                ctx.fillStyle = colors.fast;
+            } else {
+                const endY = centerY + 80;
+                currentX = startX + (endX - startX) * this.progress;
+                currentY = startY + (endY - startY) * (1 - Math.cos(this.progress * Math.PI / 2)) + this.offset;
+                ctx.fillStyle = colors.slow;
             }
-            ctx.strokeStyle = this.color;
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.stroke();
 
             ctx.beginPath();
-            ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
+            ctx.arc(currentX, currentY, 2.5, 0, Math.PI * 2);
             ctx.fill();
         }
     }
 
+    function drawWave(amplitude, frequency, phaseOffset, color, yOffset = 0) {
+        ctx.beginPath();
+        for (let x = 0; x <= centerX; x += 2) {
+            // Fade out the wave as it hits the center clutch
+            const fade = Math.max(0, 1 - Math.pow(x / centerX, 4));
+            const y = centerY + yOffset + Math.sin(x * frequency + phaseOffset) * amplitude * fade;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+    }
+
+    function drawPath(isFast, isActive) {
+        const startX = centerX;
+        const startY = centerY;
+        const endX = width;
+        
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        
+        const pathEndY = isFast ? centerY - 80 : centerY + 80;
+
+        for(let p = 0; p <= 1; p += 0.02) {
+            let px = startX + (endX - startX) * p;
+            let py;
+            if (isFast) {
+                py = startY + (pathEndY - startY) * Math.sin(p * Math.PI / 2);
+            } else {
+                py = startY + (pathEndY - startY) * (1 - Math.cos(p * Math.PI / 2));
+            }
+            ctx.lineTo(px, py);
+        }
+
+        ctx.strokeStyle = isActive ? (isFast ? colors.fast : colors.slow) : colors.inactive;
+        ctx.lineWidth = isActive ? 2.5 : 1.5;
+        ctx.stroke();
+        
+        // Draw the pill label
+        if (isActive) {
+            const labelX = width - 100;
+            const labelY = isFast ? centerY - 100 : centerY + 60;
+            
+            ctx.fillStyle = colors.pillBg;
+            ctx.beginPath();
+            ctx.roundRect(labelX, labelY, 90, 26, 13);
+            ctx.fill();
+            ctx.strokeStyle = '#3c4043';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.fillStyle = colors.text;
+            ctx.font = '11px -apple-system, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(isFast ? 'Reflex Path' : 'Inference Path', labelX + 45, labelY + 13);
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'alphabetic';
+        }
+    }
+
+    function drawPillLabel(text, x, y) {
+        ctx.fillStyle = colors.pillBg;
+        ctx.beginPath();
+        ctx.roundRect(x, y, 90, 26, 13);
+        ctx.fill();
+        ctx.strokeStyle = '#3c4043';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = colors.text;
+        ctx.font = '11px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, x + 45, y + 13);
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+    }
+
     function animate() {
-        // Enforce logical constraint: s2 cannot exceed s1
+        // Enforce logic: s2 cannot exceed s1
         if (parseInt(inputs.s2.value) > parseInt(inputs.s1.value)) {
             inputs.s2.value = inputs.s1.value;
         }
@@ -319,80 +387,76 @@
         const s2 = parseInt(inputs.s2.value);
         const tau = parseFloat(inputs.tau.value);
 
-        const g = (s1 - s2) / s1;
+        const g = s1 === 0 ? 0 : (s1 - s2) / s1;
         const isFast = g > tau;
 
-        // Update DOM Data
+        // DOM Updates
         displays.s1.innerText = s1;
         displays.s2.innerText = s2;
         displays.tau.innerText = tau.toFixed(2);
-        displays.math.innerText = `g = (${s1} - ${s2}) / ${s1} = ${g.toFixed(3)}`;
+        displays.g.innerText = g.toFixed(2);
+        
+        displays.status.innerText = isFast ? "Reflex" : "Inference";
+        displays.status.style.color = isFast ? colors.fast : colors.slow;
 
-        if (isFast) {
-            displays.indicator.innerText = "FastAPI (Reflex)";
-            displays.indicator.className = "route-status status-fast";
-        } else {
-            displays.indicator.innerText = "SlowAPI (Deep Inference)";
-            displays.indicator.className = "route-status status-slow";
-        }
-
-        // Draw Canvas
+        // Clear Canvas
         ctx.clearRect(0, 0, width, height);
 
-        // Draw topological pathways
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-        ctx.lineWidth = 40;
-        ctx.lineCap = 'round';
+        // 1. Draw Output Paths (Right side)
+        drawPath(true, isFast);   // Fast Path
+        drawPath(false, !isFast); // Slow Path
+
+        // 2. Draw Input Waves (Left side)
+        const amp1 = (s1 / 100) * 45;
+        const amp2 = (s2 / 100) * 45;
         
-        // Fast Path (Top)
+        drawWave(amp1, 0.04, time * 0.06, colors.wave1);
+        drawWave(amp2, 0.06, time * 0.09, colors.wave2, 10); // slight offset for visual separation
+
+        // Label Input on Canvas
+        drawPillLabel('Input (Signal)', 20, centerY - 60);
+
+        // 3. Center Node (The Clutch Wheel)
         ctx.beginPath();
-        ctx.moveTo(0, height * 0.2);
-        ctx.lineTo(width, height * 0.2);
+        ctx.arc(centerX, centerY, 32, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; // slight transparent fill
+        ctx.fill();
+        
+        // Dashed border
+        ctx.strokeStyle = '#9aa0a6';
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 1.5;
         ctx.stroke();
+        ctx.setLineDash([]); // reset
 
-        // Slow Path (Bottom)
-        ctx.beginPath();
-        ctx.moveTo(0, height / 2);
-        ctx.bezierCurveTo(width * 0.3, height / 2, width * 0.3, height * 0.8, width * 0.45, height * 0.8);
-        ctx.bezierCurveTo(width * 0.6, height * 0.8, width * 0.6, height / 2, width, height / 2);
-        ctx.stroke();
+        // Draw 'g' value directly inside the wheel
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`g=${g.toFixed(2)}`, centerX, centerY);
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic'; // reset
 
-        // Draw singular value vectors (Left side overlay)
-        ctx.fillStyle = 'rgba(0, 240, 255, 0.2)';
-        ctx.fillRect(20, height - s1 * 2 - 20, 30, s1 * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.font = '12px monospace';
-        ctx.fillText('σ₁', 28, height - 5);
-
-        ctx.fillStyle = 'rgba(255, 191, 0, 0.4)';
-        ctx.fillRect(60, height - s2 * 2 - 20, 30, s2 * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-        ctx.fillText('σ₂', 68, height - 5);
-
-        // Emit particles
-        if (frameCount % 15 === 0) {
-            if (isFast) {
-                particles.push(new Particle(height * 0.2, 8, '#00f0ff', false));
-            } else {
-                particles.push(new Particle(height * 0.8, 3, '#ffbf00', true));
-            }
+        // 4. Update and Draw Particles
+        // Spawn particles steadily based on the active path
+        if (Math.random() < 0.35) {
+            particles.push(new Particle(isFast));
         }
 
-        // Update and draw particles
-        for (let i = particles.length - 1; i >= 0; i--) {
-            particles[i].update();
-            particles[i].draw(ctx);
-            if (!particles[i].active) {
-                particles.splice(i, 1);
-            }
-        }
+        particles = particles.filter(p => {
+            const alive = p.update();
+            if (alive) p.draw(ctx);
+            return alive;
+        });
 
-        frameCount++;
+        time++;
         requestAnimationFrame(animate);
     }
 
-    // Start simulation
+    // Start rendering loop
     animate();
 </script>
 </body>
 </html>
+ 
